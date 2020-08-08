@@ -88,7 +88,8 @@ export default {
         }
       }
       const response = await axios.post('http://localhost:25486/api/quickstart/', body)
-      commit('init', state, response.data)
+      commit('init', response.data)
+      console.log(state)
       return response
     }
   },
@@ -109,11 +110,23 @@ export default {
       state.players = context.players
       state.hand = context.hand
       state.rivers = context.rivers
-      state.windPositions = buildWindPositions(state, context.windIndex)
+      state.windPositions = buildWindPositions(context.windIndex)
     }
   },
   getters: {
-
+    /**
+     * @description 指定したフィールド位置の河牌リストを取得します。
+     * @returns {Array} 指定したフィールド位置の河牌リスト
+     */
+    getFieldPositionRivers: state => fieldPosition => {
+      if (!state.windPositions ||
+        !state.windPositions[fieldPosition] ||
+        !Array.isArray(state.rivers) ||
+        !Array.isArray(state.rivers[state.windPositions[fieldPosition]])) {
+        return []
+      }
+      return state.rivers[state.windPositions[fieldPosition]]
+    }
   }
 }
 

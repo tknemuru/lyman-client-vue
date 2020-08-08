@@ -1,16 +1,21 @@
 <template>
-  <div>
-    ほげ
-  </div>
+  <v-container
+    fluid>
+    <mahjong-table/>
+  </v-container>
 </template>
 
 <script>
 import { mapActions } from 'vuex'
+import MahjongTable from '@/components/templates/MahjongTable'
 
+/**
+ * @description ルーム
+ */
 export default {
   name: 'Room',
   components: {
-
+    MahjongTable
   },
   props: {
     sample: {
