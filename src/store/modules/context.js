@@ -61,7 +61,7 @@ export default {
   actions: {
     /**
      * @description 即時開始処理を行います。
-     * @param {Object} param0 state
+     * @param {Object} param0 store
      */
     async quickStart ({ state, commit }) {
       const body = {
@@ -90,12 +90,82 @@ export default {
       const response = await axios.post('http://localhost:25486/api/quickstart/', body)
       commit('init', response.data)
       console.log(state)
+      console.log(response.data)
+      return response
+    },
+    /**
+     * @description ルーム情報を最新に更新します。
+     * @param {Object} param0 store
+     */
+    async reflesh ({ state, commit }) {
+      const body = {
+        roomKey: state.roomKey,
+        playerKey: state.playerKey
+      }
+      const response = await axios.post('http://localhost:25486/api/selectroom/', body)
+      console.log(response.data)
+      commit('reflesh', response.data)
+      return response
+    },
+    /**
+     * @description ツモを行います。
+     * @param {Object} param0 store
+     */
+    async draw ({ state, commit }) {
+      const body = {
+        roomKey: state.roomKey,
+        playerKey: state.playerKey
+      }
+      const response = await axios.post('http://localhost:25486/api/draw/', body)
+      console.log(response.data)
+      return response
+    },
+    /**
+     * @description 代理でAIのツモを行います。
+     * @param {Object} param0 store
+     */
+    async aiDraw ({ state, commit }) {
+      const body = {
+        roomKey: state.roomKey,
+        playerKey: state.playerKey
+      }
+      const response = await axios.post('http://localhost:25486/api/aiDraw/', body)
+      console.log(response.data)
+      return response
+    },
+    /**
+     * @description 捨牌を行います。
+     * @param {Object} param0 store
+     * @param {String} tile 捨牌
+     */
+    async discard ({ state, commit }, tile) {
+      const body = {
+        roomKey: state.roomKey,
+        playerKey: state.playerKey,
+        tile: tile
+      }
+      const response = await axios.post('http://localhost:25486/api/discard/', body)
+      console.log(response.data)
+      return response
+    },
+    /**
+     * @description 代理でAIの捨牌を行います。
+     * @param {Object} param0 store
+     */
+    async aiDiscard ({ state, commit }) {
+      const body = {
+        roomKey: state.roomKey,
+        playerKey: state.playerKey
+      }
+      const response = await axios.post('http://localhost:25486/api/aiDiscard/', body)
+      console.log(response.data)
       return response
     }
   },
   mutations: {
     /**
      * @description 初期化処理を行います。
+     * @param {Object} context 状態
      */
     init (state, context) {
       state.roomKey = context.roomKey
@@ -111,6 +181,17 @@ export default {
       state.hand = context.hand
       state.rivers = context.rivers
       state.windPositions = buildWindPositions(context.windIndex)
+    },
+    /**
+     * @description 最新情報に更新します。
+     * @param {Object} params パラメータ
+     */
+    reflesh (state, params) {
+      state.hand = params.hand
+      state.rivers = params.rivers
+      state.roomName = params.name
+      state.roomState = params.state
+      state.turn = params.turn
     }
   },
   getters: {
@@ -119,6 +200,7 @@ export default {
      * @returns {Array} 指定したフィールド位置の河牌リスト
      */
     getFieldPositionRivers: state => fieldPosition => {
+      console.log(state.windPositions)
       if (!state.windPositions ||
         !state.windPositions[fieldPosition] ||
         !Array.isArray(state.rivers) ||

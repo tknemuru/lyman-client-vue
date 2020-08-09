@@ -4,31 +4,70 @@
     class="table-container">
     <v-row>
       <v-col
-        cols="3">
+        cols="4">
       </v-col>
       <v-col
-        cols="6">
-        <river-tiles-set
-          :tiles="getFieldPositionRivers(StaticModels.FieldPosition.Upper)">
-        </river-tiles-set>
+        cols="4">
+        <ul class="upper">
+          <li
+            v-for="(tile, i) in getFieldPositionRivers(StaticModels.FieldPosition.Upper)"
+            :key="i">
+              <tile
+                :tile="tile"
+                domain="river">
+              </tile>
+          </li>
+        </ul>
       </v-col>
       <v-col
-        cols="3">
+        cols="4">
       </v-col>
     </v-row>
     <v-row>
       <v-col
-        cols="3">
+        cols="4">
+        <ul class="left">
+          <li
+            v-for="(tile, i) in getFieldPositionRivers(StaticModels.FieldPosition.Left)"
+            :key="i">
+              <tile
+                :tile="tile"
+                domain="river">
+              </tile>
+          </li>
+        </ul>
       </v-col>
       <v-col
-        cols="6">
+        cols="4">
         <div class="grid-content score-board-container">
             <score-board></score-board>
         </div>
       </v-col>
        <v-col
-        cols="3">
+        cols="4">
+        <ul class="right">
+          <li
+            v-for="(tile, i) in getFieldPositionRivers(StaticModels.FieldPosition.Right)"
+            :key="i">
+              <tile
+                :tile="tile"
+                domain="river">
+              </tile>
+          </li>
+        </ul>
       </v-col>
+    </v-row>
+    <v-row>
+        <ul class="lower">
+          <li
+            v-for="(tile, i) in getFieldPositionRivers(StaticModels.FieldPosition.Lower)"
+            :key="i">
+              <tile
+                :tile="tile"
+                domain="river">
+              </tile>
+          </li>
+        </ul>
     </v-row>
     <v-row
       class="tiles-container hands-container">
@@ -39,7 +78,8 @@
             <tile
               :tile="tile"
               domain="hand"
-              :last="(hand.length - 1) === i">
+              :last="(hand.length - 1) === i"
+              @selected="onSelectedDiscardTile">
             </tile>
         </li>
       </ul>
@@ -48,8 +88,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
-import RiverTilesSet from '@/components/molecules/RiverTilesSet'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import ScoreBoard from '@/components/organisms/ScoreBoard'
 import StaticModels from '@/StaticModels'
 import Tile from '@/components/atoms/Tile'
@@ -60,7 +99,6 @@ import Tile from '@/components/atoms/Tile'
 export default {
   name: 'MahjongTable',
   components: {
-    RiverTilesSet,
     ScoreBoard,
     Tile
   },
@@ -87,9 +125,20 @@ export default {
 
   },
   mounted () {
-    console.log(this.hand)
   },
   methods: {
+    /**
+     * @description 捨牌を選択した時に実行します。
+     * @param {Number} tile 捨牌
+     */
+    async onSelectedDiscardTile (tile) {
+      await this.discard(tile)
+      await this.reflesh()
+    },
+    ...mapActions({
+      discard: 'context/discard',
+      reflesh: 'context/reflesh'
+    })
   }
 }
 </script>

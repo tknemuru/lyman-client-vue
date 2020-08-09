@@ -16,6 +16,17 @@ const StaticModelsObj = Object.freeze({
     Upper: 'upper',
     /** 左 */
     Left: 'left'
+  },
+  /**
+   * @description ターン種別
+   */
+  TurnType: {
+    /** 自ターン */
+    Self: 1,
+    /** AIターンの代理操作 */
+    OtherAgency: 2,
+    /** 他ターン */
+    Other: 3
   }
 })
 const StaticModels = new Vue({
