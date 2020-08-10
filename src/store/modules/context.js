@@ -192,6 +192,8 @@ export default {
       state.roomName = params.name
       state.roomState = params.state
       state.turn = params.turn
+      state.reachable = params.reachableInfo.reachable
+      console.log(state)
     }
   },
   getters: {
