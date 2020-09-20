@@ -2,14 +2,14 @@
   <v-container
     fluid>
     <mahjong-table/>
-    <reach-confirm-modal/>
+    <action-confirm-modal/>
   </v-container>
 </template>
 
 <script>
 import { mapActions, mapState, mapGetters } from 'vuex'
 import MahjongTable from '@/components/templates/MahjongTable'
-import ReachConfirmModal from '@/components/organisms/ReachConfirmModal'
+import ActionConfirmModal from '@/components/organisms/ActionConfirmModal'
 import StaticModels from '@/StaticModels'
 
 /**
@@ -19,7 +19,7 @@ export default {
   name: 'Room',
   components: {
     MahjongTable,
-    ReachConfirmModal
+    ActionConfirmModal
   },
   props: {
     sample: {

@@ -55,7 +55,19 @@ export default {
       /**
        * @description 河牌
        */
-      rivers: []
+      rivers: [],
+      /**
+       * @description リーチ可能性情報
+       */
+      reachableInfo: null,
+      /**
+       * @description ロン可能性情報
+       */
+      ronableInfo: null,
+      /**
+       * @description ツモ上がり可能性情報
+       */
+      drawWinnableInfo: null
     }
   },
   actions: {
@@ -118,6 +130,7 @@ export default {
       }
       const response = await axios.post('http://localhost:25486/api/draw/', body)
       console.log(response.data)
+      commit('setDrawWinnableInfo', response.data.drawWinnableInfo)
       return response
     },
     /**
@@ -192,8 +205,16 @@ export default {
       state.roomName = params.name
       state.roomState = params.state
       state.turn = params.turn
-      state.reachable = params.reachableInfo.reachable
+      state.reachableInfo = params.reachableInfo
+      state.ronableInfo = params.ronableInfo
       console.log(state)
+    },
+    /**
+     * @description ツモ上がり可能性情報を設定します。
+     * @param {Object} info ツモ上がり可能性情報
+     */
+    setDrawWinnableInfo (state, info) {
+      state.drawWinnableInfo = info
     }
   },
   getters: {
@@ -204,7 +225,7 @@ export default {
     getFieldPositionRivers: state => fieldPosition => {
       console.log(state.windPositions)
       if (!state.windPositions ||
-        !state.windPositions[fieldPosition] ||
+        state.windPositions[fieldPosition] == null ||
         !Array.isArray(state.rivers) ||
         !Array.isArray(state.rivers[state.windPositions[fieldPosition]])) {
         return []
