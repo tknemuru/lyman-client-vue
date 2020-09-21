@@ -5,6 +5,14 @@ export default {
   state () {
     return {
       /**
+       * @description コネクションID
+       */
+      connectionId: null,
+      /**
+       * @description アクション確認をスキップするかどうか
+       */
+      skipConfirmAction: false,
+      /**
        * @description ルームキー
        */
       roomKey: null,
@@ -72,6 +80,18 @@ export default {
   },
   actions: {
     /**
+     * @description コネクションIDを更新します。
+     * @param {Object} param0 store
+     */
+    async updateConnectionId ({ state }) {
+      const body = {
+        roomKey: state.roomKey,
+        playerKey: state.playerKey,
+        connectionId: state.connectionId
+      }
+      await axios.post('https://localhost:61639/api/updateConnectionId/', body)
+    },
+    /**
      * @description 即時開始処理を行います。
      * @param {Object} param0 store
      */
@@ -82,7 +102,8 @@ export default {
         },
         enterRoomRequests: [
           {
-            playerName: 'myself'
+            playerName: 'myself',
+            connectionId: state.connectionId
           },
           {
             playerName: 'other1'
@@ -177,10 +198,27 @@ export default {
   },
   mutations: {
     /**
+     * @description コネクションIDを設定します。
+     * @param {Object} state state
+     * @param {String} id コネクションID
+     */
+    setConnectionId (state, id) {
+      state.connectionId = id
+    },
+    /**
+     * @description アクション確認をスキップするかどうかを設定します。
+     * @param {Object} state state
+     * @param {Boolean} is アクション確認をスキップするかどうか
+     */
+    setSkipConfirmAction (state, is) {
+      state.skipConfirmAction = is
+    },
+    /**
      * @description 初期化処理を行います。
      * @param {Object} context 状態
      */
     init (state, context) {
+      state.skipConfirmAction = false
       state.roomKey = context.roomKey
       state.windIndex = context.windIndex
       state.wind = context.wind
@@ -210,18 +248,6 @@ export default {
       console.log(state)
     },
     /**
-     * @description 部屋状態の通知結果を反映します。
-     * @param {Object} state state
-     * @param {Object} params パラメータ
-     */
-    reflectNotifyRoomContext (state, params) {
-      state.rivers = params.rivers
-      state.roomName = params.name
-      state.roomState = params.state
-      state.turn = params.turn
-      console.log(state)
-    },
-    /**
      * @description ツモ上がり可能性情報を設定します。
      * @param {Object} info ツモ上がり可能性情報
      */
@@ -244,17 +270,37 @@ export default {
       }
       return state.rivers[state.windPositions[fieldPosition]]
     },
+    /**
+     * @description リーチできるかどうか
+     * @param {Object} state state
+     */
     reachable (state) {
       return state.reachableInfo && state.reachableInfo.reachable
     },
+    /**
+     * @description ロンできるかどうか
+     * @param {Object} state state
+     */
     ronable (state) {
       return state.ronableInfo && state.ronableInfo.ronable
     },
+    /**
+     * @description ツモであがれるかどうか
+     * @param {Object} state state
+     */
     drawWinnable (state) {
       console.log(state.drawWinnableInfo)
       return state.drawWinnableInfo && state.drawWinnableInfo.drawWinnable
     },
+    /**
+     * @description アクション確認する必要があるかどうか
+     * @param {Object} state state
+     */
     requiredConfirmAction (state, getters) {
+      if (state.skipConfirmAction) {
+        console.log('★skip！！')
+        return false
+      }
       return getters.reachable || getters.ronable || getters.drawWinnable
     }
   }

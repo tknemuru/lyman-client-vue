@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { mapActions, mapState, mapGetters } from 'vuex'
+import { mapActions, mapState, mapGetters, mapMutations } from 'vuex'
 import MahjongTable from '@/components/templates/MahjongTable'
 import ActionConfirmModal from '@/components/organisms/ActionConfirmModal'
 import StaticModels from '@/StaticModels'
@@ -35,6 +35,7 @@ export default {
   },
   computed: {
     ...mapState({
+      connectionId: state => state.context.connectionId,
       turn: state => state.context.turn,
       firstPlayer: state => state.context.firstPlayer,
       windIndex: state => state.context.windIndex
@@ -46,11 +47,18 @@ export default {
   watch: {
     turn (val) {
       console.log(val)
+      this.setSkipConfirmAction(false)
       this.executeTurnAction()
+    },
+    connectionId (val) {
+      console.log(val)
+      if (!val) {
+        return
+      }
+      this.quickStart()
     }
   },
   mounted () {
-    this.quickStart()
   },
   methods: {
     /**
@@ -58,7 +66,7 @@ export default {
      * @returns {void}
      */
     onActionSkip () {
-      this.executeTurnAction()
+      this.setSkipConfirmAction(true)
     },
     /**
      * @description ターンごとのアクションを実行します。
@@ -68,26 +76,16 @@ export default {
       const turnType = this.getTurnType(this.turn)
       switch (turnType) {
         case StaticModels.TurnType.Self:
-          // ルーム情報を最新に更新
-          await this.reflesh()
-          if (!this.requiredConfirmAction) {
-            // ツモ
-            await this.draw()
-            // ルーム情報を最新に更新
-            await this.reflesh()
-          }
+          // ツモ
+          await this.draw()
           break
         case StaticModels.TurnType.OtherAgency:
-          // ルーム情報を最新に更新
-          await this.reflesh()
           // AIのツモ
           await this.aiDraw()
           // AIの捨牌
           await this.aiDiscard()
           break
         case StaticModels.TurnType.Other:
-          // ルーム情報を最新に更新
-          await this.reflesh()
           break
       }
     },
@@ -111,6 +109,9 @@ export default {
       draw: 'context/draw',
       quickStart: 'context/quickStart',
       reflesh: 'context/reflesh'
+    }),
+    ...mapMutations({
+      setSkipConfirmAction: 'context/setSkipConfirmAction'
     })
   }
 }

@@ -1,7 +1,7 @@
 'use strict'
 
 import Vue from 'vue'
-import { mapMutations } from 'vuex'
+import { mapMutations, mapActions } from 'vuex'
 import * as signalR from '@microsoft/signalr'
 import store from '@/store/index'
 
@@ -27,37 +27,30 @@ const signalRManager = new Vue({
         .withUrl('https://localhost:61639/contexthub')
         .withAutomaticReconnect()
         .build()
-      // this.connection
-      //   .start()
-      //   .then(() => {
-      //     console.log('Connection started')
-      //   })
-      //   .catch(err => console.log('Error while starting connection: ' + err))
-      this.connection.on('ReceiveMessage', contextJson => {
-        console.log('★ReceiveMessage')
+      this.connection.on('notifyRoomContext', contextJson => {
         console.log(contextJson)
         const context = JSON.parse(contextJson)
         console.log(context)
-        this.reflect(context)
+        this.reflesh(context)
       })
-      const vm = this
-      vm.startConnection()
-      // this.connection.onclose(async () => {
-      //   await vm.startConnection()
-      // })
+      this.connection.onreconnected(connectionId => {
+        console.log(connectionId)
+        this.setConnectionId(this.connection.connectionId)
+        this.updateConnectionId(connectionId)
+      })
+      this.connection.start()
+        .then(() => {
+          console.log('Connection started')
+          console.log(this.connection.connectionId)
+          this.setConnectionId(this.connection.connectionId)
+        })
     },
-    async startConnection () {
-      try {
-        await this.connection.start()
-        console.log('Connection started')
-      } catch (err) {
-        console.log(err)
-        const vm = this
-        setTimeout(() => vm.startConnection(), 5000)
-      }
-    },
+    ...mapActions({
+      updateConnectionId: 'context/updateConnectionId'
+    }),
     ...mapMutations({
-      reflect: 'context/reflectNotifyRoomContext'
+      reflesh: 'context/reflesh',
+      setConnectionId: 'context/setConnectionId'
     })
   }
 })
