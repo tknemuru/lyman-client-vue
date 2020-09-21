@@ -133,7 +133,7 @@ export default {
      */
     async onSelectedDiscardTile (tile) {
       await this.discard(tile)
-      await this.reflesh()
+      // await this.reflesh()
     },
     ...mapActions({
       discard: 'context/discard',

@@ -20,7 +20,8 @@
           ロン {{ yaku }}
         </v-btn>
         <v-btn
-          :key="`ron-skip-${i}`">
+          :key="`ron-skip-${i}`"
+          @click="onClickSkip">
           スキップ
         </v-btn>
       </template>
@@ -34,7 +35,8 @@
           ツモ {{ yaku }}
         </v-btn>
         <v-btn
-          :key="`draw-skip-${i}`">
+          :key="`draw-skip-${i}`"
+          @click="onClickSkip">
           スキップ
         </v-btn>
       </template>
@@ -78,6 +80,13 @@ export default {
   mounted () {
   },
   methods: {
+    /**
+     * @description スキップボタン押下時に実行します。
+     * @returns {void}
+     */
+    onClickSkip () {
+      this.$emit('skip')
+    },
     ...mapActions({
     })
   }

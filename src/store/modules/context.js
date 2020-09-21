@@ -99,7 +99,7 @@ export default {
         selectRoomRequest: {
         }
       }
-      const response = await axios.post('http://localhost:25486/api/quickstart/', body)
+      const response = await axios.post('https://localhost:61639/api/quickstart/', body)
       commit('init', response.data)
       console.log(state)
       console.log(response.data)
@@ -114,7 +114,7 @@ export default {
         roomKey: state.roomKey,
         playerKey: state.playerKey
       }
-      const response = await axios.post('http://localhost:25486/api/selectroom/', body)
+      const response = await axios.post('https://localhost:61639/api/selectroom/', body)
       console.log(response.data)
       commit('reflesh', response.data)
       return response
@@ -128,7 +128,7 @@ export default {
         roomKey: state.roomKey,
         playerKey: state.playerKey
       }
-      const response = await axios.post('http://localhost:25486/api/draw/', body)
+      const response = await axios.post('https://localhost:61639/api/draw/', body)
       console.log(response.data)
       commit('setDrawWinnableInfo', response.data.drawWinnableInfo)
       return response
@@ -142,7 +142,7 @@ export default {
         roomKey: state.roomKey,
         playerKey: state.playerKey
       }
-      const response = await axios.post('http://localhost:25486/api/aiDraw/', body)
+      const response = await axios.post('https://localhost:61639/api/aiDraw/', body)
       console.log(response.data)
       return response
     },
@@ -157,7 +157,7 @@ export default {
         playerKey: state.playerKey,
         tile: tile
       }
-      const response = await axios.post('http://localhost:25486/api/discard/', body)
+      const response = await axios.post('https://localhost:61639/api/discard/', body)
       console.log(response.data)
       return response
     },
@@ -170,7 +170,7 @@ export default {
         roomKey: state.roomKey,
         playerKey: state.playerKey
       }
-      const response = await axios.post('http://localhost:25486/api/aiDiscard/', body)
+      const response = await axios.post('https://localhost:61639/api/aiDiscard/', body)
       console.log(response.data)
       return response
     }
@@ -200,13 +200,25 @@ export default {
      * @param {Object} params パラメータ
      */
     reflesh (state, params) {
-      state.hand = params.hand
       state.rivers = params.rivers
       state.roomName = params.name
       state.roomState = params.state
       state.turn = params.turn
+      state.hand = params.hand
       state.reachableInfo = params.reachableInfo
       state.ronableInfo = params.ronableInfo
+      console.log(state)
+    },
+    /**
+     * @description 部屋状態の通知結果を反映します。
+     * @param {Object} state state
+     * @param {Object} params パラメータ
+     */
+    reflectNotifyRoomContext (state, params) {
+      state.rivers = params.rivers
+      state.roomName = params.name
+      state.roomState = params.state
+      state.turn = params.turn
       console.log(state)
     },
     /**

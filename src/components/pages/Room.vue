@@ -2,7 +2,9 @@
   <v-container
     fluid>
     <mahjong-table/>
-    <action-confirm-modal/>
+    <action-confirm-modal
+      @skip="onActionSkip">
+    </action-confirm-modal>
   </v-container>
 </template>
 
@@ -38,34 +40,57 @@ export default {
       windIndex: state => state.context.windIndex
     }),
     ...mapGetters({
+      requiredConfirmAction: 'context/requiredConfirmAction'
     })
   },
   watch: {
-    async turn (val) {
+    turn (val) {
       console.log(val)
-      const turnType = this.getTurnType(val)
-      switch (turnType) {
-        case StaticModels.TurnType.Self:
-          // ツモ
-          await this.draw()
-          // ルーム情報を最新に更新
-          await this.reflesh()
-          break
-        case StaticModels.TurnType.OtherAgency:
-          // AIのツモ
-          await this.aiDraw()
-          // AIの捨牌
-          await this.aiDiscard()
-          // ルーム情報を最新に更新
-          await this.reflesh()
-          break
-      }
+      this.executeTurnAction()
     }
   },
   mounted () {
     this.quickStart()
   },
   methods: {
+    /**
+     * @description ダイアログ選択のアクションをスキップした時に実行します。
+     * @returns {void}
+     */
+    onActionSkip () {
+      this.executeTurnAction()
+    },
+    /**
+     * @description ターンごとのアクションを実行します。
+     * @returns {void}
+     */
+    async executeTurnAction () {
+      const turnType = this.getTurnType(this.turn)
+      switch (turnType) {
+        case StaticModels.TurnType.Self:
+          // ルーム情報を最新に更新
+          await this.reflesh()
+          if (!this.requiredConfirmAction) {
+            // ツモ
+            await this.draw()
+            // ルーム情報を最新に更新
+            await this.reflesh()
+          }
+          break
+        case StaticModels.TurnType.OtherAgency:
+          // ルーム情報を最新に更新
+          await this.reflesh()
+          // AIのツモ
+          await this.aiDraw()
+          // AIの捨牌
+          await this.aiDiscard()
+          break
+        case StaticModels.TurnType.Other:
+          // ルーム情報を最新に更新
+          await this.reflesh()
+          break
+      }
+    },
     /**
      * ターン種別を取得します。
      */
