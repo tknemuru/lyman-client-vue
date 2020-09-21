@@ -1,6 +1,6 @@
 <template>
   <v-dialog
-    :value="active"
+    :value="requiredConfirmAction"
     persistent>
     <div
       v-if="reachable">
@@ -58,24 +58,16 @@ export default {
     }
   },
   computed: {
-    active () {
-      return this.reachable || this.ronable || this.drawWinnable
-    },
-    reachable () {
-      return this.reachableInfo && this.reachableInfo.reachable
-    },
-    ronable () {
-      return this.ronableInfo && this.ronableInfo.ronable
-    },
-    drawWinnable () {
-      return this.drawWinnableInfo && this.drawWinnableInfo.drawWinnable
-    },
     ...mapState({
+      drawWinnableInfo: state => state.context.drawWinnableInfo,
       reachableInfo: state => state.context.reachableInfo,
-      ronableInfo: state => state.context.ronableInfo,
-      drawWinnableInfo: state => state.context.drawWinnableInfo
+      ronableInfo: state => state.context.ronableInfo
     }),
     ...mapGetters({
+      drawWinnable: 'context/drawWinnable',
+      reachable: 'context/reachable',
+      requiredConfirmAction: 'context/requiredConfirmAction',
+      ronable: 'context/ronable'
     })
   },
   watch: {

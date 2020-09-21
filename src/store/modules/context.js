@@ -231,6 +231,19 @@ export default {
         return []
       }
       return state.rivers[state.windPositions[fieldPosition]]
+    },
+    reachable (state) {
+      return state.reachableInfo && state.reachableInfo.reachable
+    },
+    ronable (state) {
+      return state.ronableInfo && state.ronableInfo.ronable
+    },
+    drawWinnable (state) {
+      console.log(state.drawWinnableInfo)
+      return state.drawWinnableInfo && state.drawWinnableInfo.drawWinnable
+    },
+    requiredConfirmAction (state, getters) {
+      return getters.reachable || getters.ronable || getters.drawWinnable
     }
   }
 }
