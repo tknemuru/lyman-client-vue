@@ -5,6 +5,11 @@ import Vue from 'vue'
  */
 const StaticModelsObj = Object.freeze({
   /**
+   * @description APIドメイン
+   */
+  // ApiDomain: 'localhost:61639',
+  ApiDomain: '7bc75d9733ed.ngrok.io',
+  /**
    * @description フィールド位置
    */
   FieldPosition: {

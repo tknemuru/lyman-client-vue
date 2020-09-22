@@ -2,7 +2,7 @@
   <img
     :class="classObject"
     :src="imagePath"
-    @dblclick="onSelected">
+    @click="onSelected">
 </template>
 
 <script>
@@ -12,6 +12,7 @@
 export default {
   data () {
     return {
+      selected: false
     }
   },
   props: {

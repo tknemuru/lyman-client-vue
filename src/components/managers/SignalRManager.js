@@ -4,6 +4,7 @@ import Vue from 'vue'
 import { mapMutations, mapActions } from 'vuex'
 import * as signalR from '@microsoft/signalr'
 import store from '@/store/index'
+import StaticModels from '@/StaticModels'
 
 /**
  * @description SignalRの管理機能を提供します。
@@ -24,7 +25,7 @@ const signalRManager = new Vue({
      */
     init () {
       this.connection = new signalR.HubConnectionBuilder()
-        .withUrl('https://localhost:61639/contexthub')
+        .withUrl(`https://${StaticModels.ApiDomain}/contexthub`)
         .withAutomaticReconnect()
         .build()
       this.connection.on('notifyRoomContext', contextJson => {

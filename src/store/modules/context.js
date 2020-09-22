@@ -1,4 +1,5 @@
 import axios from 'axios'
+import StaticModels from '@/StaticModels'
 
 export default {
   namespaced: true,
@@ -89,7 +90,7 @@ export default {
         playerKey: state.playerKey,
         connectionId: state.connectionId
       }
-      await axios.post('https://localhost:61639/api/updateConnectionId/', body)
+      await axios.post(`https://${StaticModels.ApiDomain}/api/updateConnectionId/`, body)
     },
     /**
      * @description 即時開始処理を行います。
@@ -120,7 +121,7 @@ export default {
         selectRoomRequest: {
         }
       }
-      const response = await axios.post('https://localhost:61639/api/quickstart/', body)
+      const response = await axios.post(`https://${StaticModels.ApiDomain}/api/quickstart/`, body)
       commit('init', response.data)
       console.log(state)
       console.log(response.data)
@@ -135,7 +136,7 @@ export default {
         roomKey: state.roomKey,
         playerKey: state.playerKey
       }
-      const response = await axios.post('https://localhost:61639/api/selectroom/', body)
+      const response = await axios.post(`https://${StaticModels.ApiDomain}/api/selectroom/`, body)
       console.log(response.data)
       commit('reflesh', response.data)
       return response
@@ -149,7 +150,7 @@ export default {
         roomKey: state.roomKey,
         playerKey: state.playerKey
       }
-      const response = await axios.post('https://localhost:61639/api/draw/', body)
+      const response = await axios.post(`https://${StaticModels.ApiDomain}/api/draw/`, body)
       console.log(response.data)
       commit('setDrawWinnableInfo', response.data.drawWinnableInfo)
       return response
@@ -163,7 +164,7 @@ export default {
         roomKey: state.roomKey,
         playerKey: state.playerKey
       }
-      const response = await axios.post('https://localhost:61639/api/aiDraw/', body)
+      const response = await axios.post(`https://${StaticModels.ApiDomain}/api/aiDraw/`, body)
       console.log(response.data)
       return response
     },
@@ -178,7 +179,7 @@ export default {
         playerKey: state.playerKey,
         tile: tile
       }
-      const response = await axios.post('https://localhost:61639/api/discard/', body)
+      const response = await axios.post(`https://${StaticModels.ApiDomain}/api/discard/`, body)
       console.log(response.data)
       return response
     },
@@ -191,7 +192,7 @@ export default {
         roomKey: state.roomKey,
         playerKey: state.playerKey
       }
-      const response = await axios.post('https://localhost:61639/api/aiDiscard/', body)
+      const response = await axios.post(`https://${StaticModels.ApiDomain}/api/aiDiscard/`, body)
       console.log(response.data)
       return response
     }
