@@ -118,6 +118,7 @@ export default {
       hand: state => state.context.hand
     }),
     ...mapGetters({
+      turnType: 'context/getTurnType',
       getFieldPositionRivers: 'context/getFieldPositionRivers'
     })
   },
@@ -132,8 +133,10 @@ export default {
      * @param {Number} tile 捨牌
      */
     async onSelectedDiscardTile (tile) {
+      if (this.turnType !== StaticModels.TurnType.Self) {
+        return
+      }
       await this.discard(tile)
-      // await this.reflesh()
     },
     ...mapActions({
       discard: 'context/discard',

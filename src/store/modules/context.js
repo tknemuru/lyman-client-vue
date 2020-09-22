@@ -103,16 +103,20 @@ export default {
         },
         enterRoomRequests: [
           {
+            playerType: StaticModels.PlayerType.Human,
             playerName: 'myself',
             connectionId: state.connectionId
           },
           {
+            playerType: StaticModels.PlayerType.Cpu,
             playerName: 'other1'
           },
           {
+            playerType: StaticModels.PlayerType.Cpu,
             playerName: 'other2'
           },
           {
+            playerType: StaticModels.PlayerType.Cpu,
             playerName: 'other3'
           }
         ],
@@ -216,18 +220,18 @@ export default {
      * @param {Object} param0 store
      * @param {Object} param パラメータ
      * @param {String} param.roomKey ルームキー
+     * @param {String} param.playerType プレイヤ種別
      * @param {String} param.playerName プレイヤ名
-     * @param {String} param.isCpu CPUプレイヤの入室かどうか
      * @returns {Object} 入室結果
      */
     async enterRoom ({ state, commit }, param) {
       const body = {
         roomKey: param.roomKey,
         playerName: param.playerName || state.playerName,
-        connectionId: param.isCpu ? null : state.connectionId
+        connectionId: param.playerType === StaticModels.PlayerType.Human ? state.connectionId : null
       }
       const response = await axios.post(`https://${StaticModels.ApiDomain}/api/enterRoom/`, body)
-      if (!param.isCpu) {
+      if (param.playerType === StaticModels.PlayerType.Human) {
         commit('setRoomEnterdInfo',
           Object.assign(
             response.data,
@@ -305,6 +309,7 @@ export default {
       state.roomName = params.name
       state.roomState = params.state
       state.turn = params.turn
+      state.players = params.players
       state.hand = params.hand
       state.reachableInfo = params.reachableInfo
       state.ronableInfo = params.ronableInfo
@@ -346,6 +351,25 @@ export default {
         return []
       }
       return state.rivers[state.windPositions[fieldPosition]]
+    },
+    /**
+     * @description ターン種別を取得します。
+     * @param {Number} turn ターン
+     * @returns {Number} ターン種別
+     */
+    getTurnType (state) {
+      let type
+      if (state.turn === state.windIndex) {
+        type = StaticModels.TurnType.Self
+      } else {
+        if (state.firstPlayer &&
+          state.players[state.turn].playerType === StaticModels.PlayerType.Cpu) {
+          type = StaticModels.TurnType.OtherAgency
+        } else {
+          type = StaticModels.TurnType.Other
+        }
+      }
+      return type
     },
     /**
      * @description リーチできるかどうか

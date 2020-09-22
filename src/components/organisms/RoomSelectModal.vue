@@ -175,14 +175,17 @@ export default {
     async createRoomAndEnter () {
       const creResponse = await this.createRoom({ roomName: this.roomName })
       // 自分の入室
-      await this.enterRoom({ roomKey: creResponse.roomKey })
+      await this.enterRoom({
+        roomKey: creResponse.roomKey,
+        playerType: StaticModels.PlayerType.Human
+      })
       // CPUの入室
       const cpuCount = 4 - this.participants
       for (let i = 0; i < cpuCount; i++) {
         await this.enterRoom({
           roomKey: creResponse.roomKey,
-          playerName: `CpuPlayer${i + 1}`,
-          isCpu: true
+          playerType: StaticModels.PlayerType.Cpu,
+          playerName: `CpuPlayer${i + 1}`
         })
       }
     },
@@ -204,7 +207,8 @@ export default {
     async onSelectRoom (room) {
       this.enterRoom({
         roomKey: room.key,
-        roomName: room.name
+        roomName: room.name,
+        playerType: StaticModels.PlayerType.Human
       })
     },
     ...mapMutations({

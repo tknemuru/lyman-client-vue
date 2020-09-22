@@ -42,12 +42,11 @@ export default {
   computed: {
     ...mapState({
       connectionId: state => state.context.connectionId,
-      firstPlayer: state => state.context.firstPlayer,
       roomState: state => state.context.roomState,
-      turn: state => state.context.turn,
-      windIndex: state => state.context.windIndex
+      turn: state => state.context.turn
     }),
     ...mapGetters({
+      turnType: 'context/getTurnType',
       requiredConfirmAction: 'context/requiredConfirmAction'
     })
   },
@@ -72,11 +71,13 @@ export default {
     roomState (val) {
       switch (val) {
         case StaticModels.RoomState.Entered:
-          this.dealtTiles()
+          if (!this.$route.query.q) {
+            this.dealtTiles()
+          }
           break
         case StaticModels.RoomState.Dealted:
-          this.setSkipConfirmAction(false)
-          this.executeTurnAction()
+          // this.setSkipConfirmAction(false)
+          // this.executeTurnAction()
           break
         default:
           break
@@ -98,8 +99,7 @@ export default {
      * @returns {void}
      */
     async executeTurnAction () {
-      const turnType = this.getTurnType(this.turn)
-      switch (turnType) {
+      switch (this.turnType) {
         case StaticModels.TurnType.Self:
           // ツモ
           await this.draw()
@@ -113,20 +113,6 @@ export default {
         case StaticModels.TurnType.Other:
           break
       }
-    },
-    /**
-     * ターン種別を取得します。
-     */
-    getTurnType (turn) {
-      let type
-      if (this.turn === this.windIndex) {
-        type = StaticModels.TurnType.Self
-      } else if (this.firstPlayer) {
-        type = StaticModels.TurnType.OtherAgency
-      } else {
-        type = StaticModels.TurnType.Other
-      }
-      return type
     },
     ...mapActions({
       aiDiscard: 'context/aiDiscard',

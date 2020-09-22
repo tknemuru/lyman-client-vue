@@ -38,16 +38,16 @@ const StaticModelsObj = Object.freeze({
    */
   RoomState: {
     /** 未定義 */
-    Undefined: 'undefined',
+    Undefined: 0,
 
     /** 入室中 */
-    Entering: 'entering',
+    Entering: 1,
 
     /** 入室完了 */
-    Entered: 'entered',
+    Entered: 2,
 
     /** 配牌完了 */
-    Dealted: 'dealted'
+    Dealted: 3
   },
   /**
    * @description 部屋選択アクション種別
@@ -57,6 +57,30 @@ const StaticModelsObj = Object.freeze({
     Create: 1,
     /** 探す */
     Select: 2
+  },
+  /**
+   * @description プレイヤ種別
+   */
+  PlayerType: {
+    /** 人間 */
+    Human: 0,
+    /** CPU */
+    Cpu: 1
+  },
+  /**
+   * @description 風
+   */
+  Wind: {
+    /** 未確定 */
+    Undefined: -1,
+    /** 東 */
+    East: 0,
+    /** 南 */
+    South: 1,
+    /** 西 */
+    West: 2,
+    /** 北 */
+    North: 3
   }
 })
 const StaticModels = new Vue({
