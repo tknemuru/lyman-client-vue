@@ -227,6 +227,7 @@ export default {
     async enterRoom ({ state, commit }, param) {
       const body = {
         roomKey: param.roomKey,
+        playerType: param.playerType,
         playerName: param.playerName || state.playerName,
         connectionId: param.playerType === StaticModels.PlayerType.Human ? state.connectionId : null
       }

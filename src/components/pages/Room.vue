@@ -69,15 +69,17 @@ export default {
       }
     },
     roomState (val) {
+      console.log(val)
+      if (this.$route.query.q) {
+        return
+      }
       switch (val) {
         case StaticModels.RoomState.Entered:
-          if (!this.$route.query.q) {
-            this.dealtTiles()
-          }
+          this.dealtTiles()
           break
         case StaticModels.RoomState.Dealted:
-          // this.setSkipConfirmAction(false)
-          // this.executeTurnAction()
+          this.setSkipConfirmAction(false)
+          this.executeTurnAction()
           break
         default:
           break
@@ -99,6 +101,7 @@ export default {
      * @returns {void}
      */
     async executeTurnAction () {
+      console.log(this.turnType)
       switch (this.turnType) {
         case StaticModels.TurnType.Self:
           // ツモ
