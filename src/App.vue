@@ -1,8 +1,38 @@
 <template>
   <v-app>
     <router-view/>
+    <notify-snackbar/>
   </v-app>
 </template>
+
+<script>
+import NotifySnackbar from '@/components/templates/NotifySnackbar'
+
+/**
+ * @description App
+ */
+export default {
+  components: {
+    NotifySnackbar
+  },
+  props: {
+  },
+  data () {
+    return {
+    }
+  },
+  computed: {
+  },
+  watch: {
+  },
+  created () {
+  },
+  mounted () {
+  },
+  methods: {
+  }
+}
+</script>
 
 <style>
 html {

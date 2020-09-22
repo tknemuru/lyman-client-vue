@@ -34,6 +34,10 @@ const signalRManager = new Vue({
         console.log(context)
         this.reflesh(context)
       })
+      this.connection.on('notifyEnterRoom', message => {
+        console.log(message)
+        window.snackbar.open(message)
+      })
       this.connection.onreconnected(connectionId => {
         console.log(connectionId)
         this.setConnectionId(this.connection.connectionId)

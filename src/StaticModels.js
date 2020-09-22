@@ -32,6 +32,31 @@ const StaticModelsObj = Object.freeze({
     OtherAgency: 2,
     /** 他ターン */
     Other: 3
+  },
+  /**
+   * @description 部屋の状況
+   */
+  RoomState: {
+    /** 未定義 */
+    Undefined: 'undefined',
+
+    /** 入室中 */
+    Entering: 'entering',
+
+    /** 入室完了 */
+    Entered: 'entered',
+
+    /** 配牌完了 */
+    Dealted: 'dealted'
+  },
+  /**
+   * @description 部屋選択アクション種別
+   */
+  RoomSelectAction: {
+    /** 新しく作る */
+    Create: 1,
+    /** 探す */
+    Select: 2
   }
 })
 const StaticModels = new Vue({

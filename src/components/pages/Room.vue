@@ -2,6 +2,8 @@
   <v-container
     fluid>
     <mahjong-table/>
+    <room-select-modal/>
+    <waiting-modal/>
     <action-confirm-modal
       @skip="onActionSkip">
     </action-confirm-modal>
@@ -10,9 +12,11 @@
 
 <script>
 import { mapActions, mapState, mapGetters, mapMutations } from 'vuex'
-import MahjongTable from '@/components/templates/MahjongTable'
 import ActionConfirmModal from '@/components/organisms/ActionConfirmModal'
+import MahjongTable from '@/components/templates/MahjongTable'
+import RoomSelectModal from '@/components/organisms/RoomSelectModal'
 import StaticModels from '@/StaticModels'
+import WaitingModal from '@/components/templates/WaitingModal'
 
 /**
  * @description ルーム
@@ -20,8 +24,10 @@ import StaticModels from '@/StaticModels'
 export default {
   name: 'Room',
   components: {
+    ActionConfirmModal,
     MahjongTable,
-    ActionConfirmModal
+    RoomSelectModal,
+    WaitingModal
   },
   props: {
     sample: {
@@ -36,8 +42,9 @@ export default {
   computed: {
     ...mapState({
       connectionId: state => state.context.connectionId,
-      turn: state => state.context.turn,
       firstPlayer: state => state.context.firstPlayer,
+      roomState: state => state.context.roomState,
+      turn: state => state.context.turn,
       windIndex: state => state.context.windIndex
     }),
     ...mapGetters({
@@ -47,6 +54,9 @@ export default {
   watch: {
     turn (val) {
       console.log(val)
+      if (this.roomState !== StaticModels.RoomState.Dealted) {
+        return
+      }
       this.setSkipConfirmAction(false)
       this.executeTurnAction()
     },
@@ -55,7 +65,22 @@ export default {
       if (!val) {
         return
       }
-      this.quickStart()
+      if (this.$route.query.q) {
+        this.quickStart()
+      }
+    },
+    roomState (val) {
+      switch (val) {
+        case StaticModels.RoomState.Entered:
+          this.dealtTiles()
+          break
+        case StaticModels.RoomState.Dealted:
+          this.setSkipConfirmAction(false)
+          this.executeTurnAction()
+          break
+        default:
+          break
+      }
     }
   },
   mounted () {
@@ -106,6 +131,7 @@ export default {
     ...mapActions({
       aiDiscard: 'context/aiDiscard',
       aiDraw: 'context/aiDraw',
+      dealtTiles: 'context/dealtTiles',
       draw: 'context/draw',
       quickStart: 'context/quickStart',
       reflesh: 'context/reflesh'

@@ -124,7 +124,6 @@ export default {
       const response = await axios.post(`https://${StaticModels.ApiDomain}/api/quickstart/`, body)
       commit('init', response.data)
       console.log(state)
-      console.log(response.data)
       return response
     },
     /**
@@ -137,7 +136,6 @@ export default {
         playerKey: state.playerKey
       }
       const response = await axios.post(`https://${StaticModels.ApiDomain}/api/selectroom/`, body)
-      console.log(response.data)
       commit('reflesh', response.data)
       return response
     },
@@ -151,7 +149,6 @@ export default {
         playerKey: state.playerKey
       }
       const response = await axios.post(`https://${StaticModels.ApiDomain}/api/draw/`, body)
-      console.log(response.data)
       commit('setDrawWinnableInfo', response.data.drawWinnableInfo)
       return response
     },
@@ -165,7 +162,6 @@ export default {
         playerKey: state.playerKey
       }
       const response = await axios.post(`https://${StaticModels.ApiDomain}/api/aiDraw/`, body)
-      console.log(response.data)
       return response
     },
     /**
@@ -180,7 +176,6 @@ export default {
         tile: tile
       }
       const response = await axios.post(`https://${StaticModels.ApiDomain}/api/discard/`, body)
-      console.log(response.data)
       return response
     },
     /**
@@ -193,8 +188,67 @@ export default {
         playerKey: state.playerKey
       }
       const response = await axios.post(`https://${StaticModels.ApiDomain}/api/aiDiscard/`, body)
-      console.log(response.data)
       return response
+    },
+    /**
+     * @description 部屋を作成します。
+     * @param {Object} param0 store
+     * @returns {Object} 作成結果
+     */
+    async createRoom ({ state }, param) {
+      const body = param
+      const response = await axios.post(`https://${StaticModels.ApiDomain}/api/createRoom/`, body)
+      return response.data
+    },
+    /**
+     * @description 部屋を探します。
+     * @param {Object} param0 store
+     * @returns {Object} 部屋リスト
+     */
+    async searchRoom ({ state }) {
+      const body = {
+      }
+      const response = await axios.post(`https://${StaticModels.ApiDomain}/api/searchRoom/`, body)
+      return response.data
+    },
+    /**
+     * @description 入室します。
+     * @param {Object} param0 store
+     * @param {Object} param パラメータ
+     * @param {String} param.roomKey ルームキー
+     * @param {String} param.playerName プレイヤ名
+     * @param {String} param.isCpu CPUプレイヤの入室かどうか
+     * @returns {Object} 入室結果
+     */
+    async enterRoom ({ state, commit }, param) {
+      const body = {
+        roomKey: param.roomKey,
+        playerName: param.playerName || state.playerName,
+        connectionId: param.isCpu ? null : state.connectionId
+      }
+      const response = await axios.post(`https://${StaticModels.ApiDomain}/api/enterRoom/`, body)
+      if (!param.isCpu) {
+        commit('setRoomEnterdInfo',
+          Object.assign(
+            response.data,
+            param
+          )
+        )
+      }
+      return response.data
+    },
+    /**
+     * @description 配牌を行います。
+     * @param {Object} param0 store
+     * @returns {Object} 配牌結果
+     */
+    async dealtTiles ({ state }) {
+      const body = {
+        roomKey: state.roomKey,
+        playerKey: state.playerKey
+      }
+      const response = await axios.post(`https://${StaticModels.ApiDomain}/api/dealtTiles/`, body)
+      return response.data
     }
   },
   mutations: {
@@ -205,6 +259,14 @@ export default {
      */
     setConnectionId (state, id) {
       state.connectionId = id
+    },
+    /**
+     * @description プレイヤ名を設定します。
+     * @param {Object} state state
+     * @param {String} name プレイヤ名
+     */
+    setPlayerName (state, name) {
+      state.playerName = name
     },
     /**
      * @description アクション確認をスキップするかどうかを設定します。
@@ -254,6 +316,20 @@ export default {
      */
     setDrawWinnableInfo (state, info) {
       state.drawWinnableInfo = info
+    },
+    /**
+     * @description 入室情報を設定します。
+     * @param {Object} state state
+     * @param {Object} param パラメータ
+     */
+    setRoomEnterdInfo (state, param) {
+      state.roomKey = param.roomKey
+      state.roomName = param.roomName
+      state.playerKey = param.playerKey
+      state.windIndex = param.windIndex
+      state.wind = param.wind
+      state.firstPlayer = param.firstPlayer
+      state.windPositions = buildWindPositions(param.windIndex)
     }
   },
   getters: {
